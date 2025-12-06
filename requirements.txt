@@ -7,3 +7,11 @@ python-multipart
 python-jose[cryptography]
 passlib[bcrypt]
 streamlit
+matplotlib
+seaborn
+
+
+# pip install -r requirements.txt
+# uvicorn app.main:app --reload
+# python -m streamlit run tokens_dashboard.py
+

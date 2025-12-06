@@ -1,1 +1,5 @@
 2025-11-30 16:34:50,198 [INFO] main - Application startup complete
+2025-12-01 11:20:23,672 [INFO] main - Application startup complete
+2025-12-01 13:11:18,689 [INFO] main - Application startup complete
+2025-12-01 13:32:17,022 [ERROR] ipykernel.comm - No such comm target registered: jupyter.widget.control
+2025-12-01 13:32:17,026 [WARNING] Comm - No such comm: 5cf46f82-ef15-497d-bbd5-4e20c50dd22a

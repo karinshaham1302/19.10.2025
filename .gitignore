@@ -1,0 +1,32 @@
+# -------------------------
+# Python ignores
+# -------------------------
+__pycache__/
+*.pyc
+*.pyo
+
+# -------------------------
+# Virtual environment
+# -------------------------
+.venv/
+
+# -------------------------
+# IDE / PyCharm
+# -------------------------
+.idea/
+
+# -------------------------
+# Jupyter
+# -------------------------
+.ipynb_checkpoints/
+
+# -------------------------
+# Local data (not for GitHub)
+# -------------------------
+data/app.db
+app/logs/
+app/models/
+
+# Ignore CSVs except our dataset
+*.csv
+!private_lessons_data.csv
