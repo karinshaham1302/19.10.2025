@@ -1,0 +1,101 @@
+subject,student_level,lesson_minutes,teacher_experience_years,is_online,city,teacher_age,lesson_price
+computers,university,45,14,yes,Ashdod,42,175
+computers,high_school,90,4,no,Ashdod,45,195
+computers,middle,45,1,no,Kfar Saba,51,125
+math,elementary,90,9,no,Raanana,46,180
+math,high_school,75,14,no,Kfar Saba,37,190
+english,high_school,90,6,no,Netanya,24,175
+math,high_school,75,4,yes,Haifa,39,160
+math,middle,90,11,yes,Kfar Saba,28,190
+math,university,75,2,no,Tel Aviv,57,195
+english,middle,60,9,no,Jerusalem,50,145
+computers,middle,60,11,no,Beer Sheva,57,175
+english,high_school,90,8,no,Ashdod,42,180
+math,middle,75,4,no,Beer Sheva,46,150
+math,elementary,75,12,yes,Netanya,28,145
+math,university,45,11,no,Ashdod,32,160
+computers,elementary,75,4,no,Haifa,49,165
+computers,elementary,90,11,no,Tel Aviv,44,230
+english,high_school,75,0,yes,Bat Yam,35,135
+computers,elementary,45,9,yes,Modiin,35,155
+computers,middle,60,11,yes,Givatayim,53,155
+computers,elementary,90,12,no,Holon,51,200
+computers,high_school,45,3,yes,Haifa,43,135
+english,middle,45,13,yes,Bat Yam,27,110
+english,middle,75,15,no,Haifa,49,185
+math,high_school,60,0,yes,Netanya,48,130
+math,high_school,75,5,no,Herzliya,30,185
+english,elementary,45,2,no,Kfar Saba,45,90
+math,university,45,13,yes,Beer Sheva,33,155
+english,high_school,60,2,yes,Bat Yam,38,110
+math,elementary,75,13,no,Bat Yam,47,165
+english,university,75,3,yes,Herzliya,38,170
+english,middle,60,10,yes,Tel Aviv,30,165
+computers,middle,90,12,yes,Holon,57,200
+computers,university,90,6,no,Netanya,54,220
+computers,middle,90,0,yes,Kfar Saba,46,170
+english,high_school,75,11,no,Beer Sheva,23,160
+math,university,60,11,yes,Bat Yam,53,155
+computers,high_school,90,15,yes,Holon,45,225
+english,university,45,7,no,Herzliya,29,165
+english,high_school,90,13,yes,Givatayim,46,190
+math,middle,90,13,no,Ramat Gan,56,210
+math,university,45,13,yes,Holon,29,160
+computers,high_school,45,15,yes,Kfar Saba,43,165
+english,middle,45,2,no,Ashdod,48,90
+computers,middle,45,13,yes,Kfar Saba,54,160
+computers,university,75,15,yes,Tel Aviv,49,235
+english,elementary,60,4,no,Givatayim,58,110
+math,high_school,75,11,yes,Holon,42,175
+computers,elementary,90,2,no,Ramat Gan,46,205
+computers,university,60,7,no,Modiin,43,185
+computers,middle,75,10,no,Ramat Gan,47,215
+computers,middle,90,6,yes,Beer Sheva,47,190
+computers,middle,45,7,yes,Kfar Saba,28,145
+math,university,90,13,no,Petah Tikva,33,220
+computers,high_school,75,11,no,Ramat Gan,53,220
+math,middle,75,13,yes,Jerusalem,43,180
+math,university,60,5,yes,Jerusalem,58,175
+math,high_school,90,5,yes,Holon,51,170
+computers,high_school,75,7,no,Raanana,51,200
+computers,university,60,6,no,Bat Yam,47,180
+math,middle,75,14,yes,Kfar Saba,22,170
+english,university,60,5,no,Netanya,22,150
+math,high_school,90,14,yes,Jerusalem,50,200
+computers,elementary,60,8,yes,Petah Tikva,49,140
+math,high_school,45,13,no,Petah Tikva,26,145
+math,high_school,90,0,no,Petah Tikva,58,165
+computers,middle,60,5,yes,Holon,55,145
+math,elementary,90,15,no,Haifa,23,210
+math,university,90,15,yes,Holon,45,220
+math,elementary,45,2,yes,Bat Yam,33,100
+computers,elementary,45,7,no,Herzliya,50,155
+math,middle,60,9,no,Ramat Gan,28,170
+english,elementary,60,12,yes,Raanana,57,140
+english,elementary,45,7,no,Givatayim,56,100
+english,elementary,75,15,no,Haifa,53,175
+math,high_school,45,2,yes,Petah Tikva,38,115
+math,middle,90,15,yes,Jerusalem,34,200
+math,elementary,75,11,yes,Haifa,49,170
+english,high_school,90,3,yes,Beer Sheva,37,140
+math,university,75,4,no,Bat Yam,44,170
+math,high_school,45,4,no,Beer Sheva,60,125
+computers,middle,75,11,yes,Beer Sheva,38,190
+math,middle,75,13,yes,Ashdod,30,170
+math,elementary,45,5,yes,Ashdod,22,100
+english,university,45,14,yes,Netanya,25,160
+computers,elementary,90,5,yes,Herzliya,31,185
+english,high_school,75,13,yes,Raanana,34,190
+math,high_school,45,6,yes,Givatayim,34,105
+english,elementary,75,11,yes,Netanya,54,145
+math,university,75,2,no,Netanya,39,170
+computers,elementary,45,13,yes,Modiin,22,150
+computers,elementary,75,11,no,Ashdod,59,190
+math,university,60,11,no,Beer Sheva,29,185
+math,elementary,90,15,yes,Jerusalem,38,180
+math,elementary,45,3,yes,Kfar Saba,50,95
+math,high_school,45,1,no,Ashdod,51,120
+english,high_school,45,4,yes,Ashdod,54,100
+computers,elementary,75,4,no,Modiin,46,175
+english,high_school,75,0,yes,Tel Aviv,55,155
+math,middle,75,4,yes,Bat Yam,58,150
