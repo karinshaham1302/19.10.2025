@@ -1,7 +1,6 @@
 📄 README — Machine Learning & FastAPI Final Project
 
-This project implements a full machine-learning pipeline using FastAPI.
-It includes dataset upload, model training, prediction, JWT authentication, token management, and a Streamlit dashboard for user monitoring.
+This project implements an end-to-end machine-learning system using FastAPI, including dataset upload, model training, prediction, authentication, token management, and a Streamlit dashboard for monitoring usage.
 
 1. Project Structure
 19.10.2025/
@@ -12,8 +11,8 @@ It includes dataset upload, model training, prediction, JWT authentication, toke
 │   │   ├── training.py
 │   │   └── prediction.py
 │   │
-│   ├── models/                  # Stored trained ML models (.pkl)
-│   ├── logs/                    # Application logs
+│   ├── models/                  # Trained ML models (.pkl)
+│   ├── logs/                    # Log files
 │   │
 │   ├── __init__.py
 │   ├── auth_service.py
@@ -35,17 +34,17 @@ It includes dataset upload, model training, prediction, JWT authentication, toke
 2.1 Create virtual environment
 python -m venv .venv
 
-2.2 Activate virtual environment (Windows)
+2.2 Activate environment (Windows)
 .venv\Scripts\activate
 
 2.3 Install dependencies
 pip install -r requirements.txt
 
-3. Running the FastAPI Server
+3. Run the FastAPI Server
 uvicorn app.main:app --reload
 
 
-Open Swagger UI:
+Swagger UI:
 
 http://127.0.0.1:8000/docs
 
@@ -56,23 +55,23 @@ http://127.0.0.1:8000/docs
   "password": "pass1234"
 }
 
-4.2 Login
+4.2 Log in
 
-Returns a JWT token.
+Returns JWT:
 
 {
   "access_token": "<JWT_TOKEN>"
 }
 
-4.3 Using JWT in Swagger
+4.3 Authorizing in Swagger
 
-Click Authorize and paste the token without the word Bearer.
+Press Authorize and paste only the token (without “Bearer”).
 
 5. Token System
 
-Training a model = 1 token
+Model training → cost: 1 token
 
-Prediction = 5 tokens
+Model prediction → cost: 5 tokens
 
 5.1 Check tokens
 GET /auth/tokens
@@ -89,27 +88,17 @@ Endpoint:
 POST /training/train
 
 
-Form-data:
+Parameters:
 
-file: dataset (.csv)
+file (CSV)
 
-model_name: linear / decision_tree / random_forest
+model_name (linear, decision_tree, random_forest)
 
-model_params: optional JSON
+model_params (optional JSON)
 
-The server outputs metrics:
+All metrics (r², MAE, MSE, RMSE) are stored and rounded to two decimal places.
 
-r2
-
-mae
-
-mse
-
-rmse (added)
-
-All rounded to two decimal places.
-
-7. Making Predictions
+7. Prediction
 
 Endpoint:
 
@@ -138,63 +127,62 @@ Example response:
   "prediction": 163.04
 }
 
-8. How It Works — System Flow
-User → Signup/Login → Receives JWT
-              │
-              ▼
-    Authorize in Swagger
-              │
-              ▼
-    Upload CSV → Train Model → Model saved (.pkl)
-              │
-              ▼
-     Make Prediction → Tokens deducted
-              │
-              ▼
-   View usage → Streamlit dashboard
+8. System Flow (How It Works)
+User → Login → JWT
+          │
+          ▼
+   Authorize in Swagger
+          │
+          ▼
+ Upload CSV → Train Model → Save .pkl
+          │
+          ▼
+ Make Prediction (tokens deducted)
+          │
+          ▼
+ Streamlit dashboard for monitoring
 
 9. Streamlit Dashboard
 
-Run dashboard:
+Run:
 
 python -m streamlit run tokens_dashboard.py
 
 
 Displays:
 
-List of users
+Users
 
-Tokens per user
+Token balances
 
 10. Future Improvements
 
-Add additional ML models (XGBoost, SVM, Gradient Boosting)
+Add advanced ML algorithms (XGBoost, SVM, Gradient Boosting)
 
 Add batch prediction endpoint
 
-Add role-based access (Admin / User)
+Add admin role + permission tiers
 
-Add full frontend UI
+Add frontend UI
 
 Add Docker deployment
 
-Automate feature/label detection from datasets
+Automatic feature/label detection
 
 11. Notes
 
 Dataset used: private_lessons_data.csv
 
-Schema is predefined → prevents invalid predictions
+Schema is predefined to ensure consistent predictions
 
-JWT secures protected endpoints
+JWT secures access to protected endpoints
 
-Metrics are standardized across models
+All results are rounded to two decimal places
 
-🔹 גרסה מקוצרת (Summary)
+✔ גרסה מקוצרת (Summary)
 FastAPI ML server:
-- Train models from CSV
-- Predict using latest model
-- JWT login system
+- CSV upload → train model
+- Predict using saved models
+- JWT login
 - Token-based usage control
-- Streamlit dashboard for monitoring
-
+- Streamlit monitoring dashboard
