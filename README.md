@@ -1,182 +1,70 @@
 # Machine Learning & FastAPI Final Project
 
-## Quick Summary (TL;DR)
-
-This project implements a complete machine learning pipeline exposed via a FastAPI server.  
-It includes:
-
-- A predefined CSV dataset for private-lesson pricing
-- A full EDA notebook in Jupyter
-- Model training (Linear Regression, Decision Tree, Random Forest)
-- Saving models with metadata
-- Predictions using the latest trained model
-- JWT-based authentication
-- Token-based usage control (1 token for training, 5 for prediction)
-- A Streamlit dashboard for monitoring users and token balances
+This project implements a complete machine learning pipeline served through a FastAPI backend.  
+It supports training regression models on a predefined private-lessons dataset and making predictions through authenticated API calls using JWT tokens.  
+The system also includes a token-based usage mechanism and an admin dashboard (Streamlit).
 
 ---
 
-## How the System Works
+## 1. TL;DR — Short Version
 
-The system is built around three main workflows: **authentication**, **model training**, and **prediction**, plus an **admin dashboard**.
+- Upload dataset → Train ML model (Linear, Decision Tree, Random Forest).  
+- System validates schema automatically (fixed dataset structure).  
+- Model is saved with full metadata (features, label, metrics).  
+- JWT authentication required.  
+- Each API action consumes user tokens.  
+- Prediction is performed using the latest trained model.  
+- Admin dashboard (Streamlit) displays all users and their token balance.
 
-### 1. Authentication
+---
 
-Endpoints:
+## 2. How It Works — System Flow
 
-- `POST /auth/signup` – register a new user
-- `POST /auth/login` – log in and receive a JWT access token
-- `GET /auth/tokens` – check current token balance
-- `POST /auth/add_tokens` – add tokens to the current user
-- `DELETE /auth/remove_user` – delete a user (with password confirmation)
+1. **User registers** (`/auth/signup`)  
+2. **User logs in** and receives a **JWT access token** (`/auth/login`)  
+3. User uploads `private_lessons_data.csv` to **train a model** (`/training/train`)  
+4. Model is trained, evaluated, saved to `/models/` and logged in metadata  
+5. User requests **prediction** (`/models/predict/{model_name}`)  
+6. System loads the latest trained model and returns a predicted price  
+7. All actions consume tokens (predict = 5 tokens)
 
-Flow:
+---
 
-1. User signs up with username and password.
-2. User logs in and gets a JWT token.
-3. The user pastes **only the token** into the Swagger **Authorize** dialog.
-4. All protected endpoints use this token to identify the user and control access.
+## 3. Project Structure
 
-### 2. Token System
-
-Each operation consumes tokens:
-
-| Operation            | Cost (tokens) |
-|----------------------|---------------|
-| Model training       | 1             |
-| Training multiple models (train_multi) | 1 |
-| Prediction           | 5             |
-
-Before performing an action, the API checks:
-
-- That the user is authenticated (valid JWT)
-- That the user has enough tokens
-
-If there are not enough tokens → HTTP 403 error.  
-After a successful action, tokens are deducted and the new balance is stored in the database.
-
-### 3. Model Training
-
-Main endpoint:
-
-- `POST /training/train`
-
-Input (multipart/form-data):
-
-- `file`: CSV file (`private_lessons_data.csv`)
-- `model_name`: one of:
-  - `linear`
-  - `decision_tree`
-  - `random_forest`
-- `model_params` (optional, JSON string): hyperparameters for the chosen model
-
-Internal steps:
-
-1. Load the CSV into a pandas DataFrame.
-2. Validate that the dataset contains all required columns.
-3. Split into train/test sets.
-4. Build a preprocessing pipeline:
-   - `OneHotEncoder` for categorical columns
-   - `passthrough` for numerical columns
-5. Create a model pipeline with the chosen estimator:
-   - `LinearRegression`
-   - `DecisionTreeRegressor`
-   - `RandomForestRegressor`
-6. Train the model.
-7. Evaluate on the test set with:
-   - R² (coefficient of determination)
-   - MAE (Mean Absolute Error)
-   - MSE (Mean Squared Error)
-   - RMSE (Root Mean Squared Error)
-   (all metrics are rounded to two decimal places)
-8. Save the trained pipeline as a `.pkl` file under `models/`.
-9. Store model metadata in `app/models/models_metadata.json`:
-   - ID, name, type
-   - Training timestamp
-   - Features and label
-   - Metrics
-   - Path to the saved model file
-
-The `POST /training/train` response includes:
-
-- `status` and `message`
-- `model_info` – full metadata, including metrics and the `model_id`
-
-### 4. Prediction
-
-Main endpoint:
-
-- `POST /models/predict/{model_name}`
-
-Usage:
-
-1. Ensure the user has at least 5 tokens.
-2. Call `POST /models/predict/linear` (or other `model_name`) with a JSON body:
-
-   ```json
-   {
-     "data": {
-       "subject": "math",
-       "student_level": "high_school",
-       "lesson_minutes": 60,
-       "teacher_experience_years": 5,
-       "is_online": "yes",
-       "city": "Tel Aviv"
-     }
-   }
-The backend:
-
-Loads the latest trained model with that model_name.
-
-Builds a one-row DataFrame from data.
-
-Runs .predict(...).
-
-Rounds the prediction to two decimal places.
-
-Deducts 5 tokens from the current user.
-
-Response example:
-
-json
-Copy code
-{
-  "model_name": "linear",
-  "model_id": 2,
-  "prediction": 163.04
-}
-There is also:
-
-GET /models – list all trained models and their metrics.
-
-5. Streamlit Dashboard
-File: tokens_dashboard.py
-
-The dashboard connects directly to the same SQLite database used by the API.
-
-It displays:
-
-A table of all users
-
-Token balance per user
-
-Simple summary metrics (total users, total tokens in the system)
-
-Run it with:
+```text
+19.10.2025/
+│
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── config.py
+│   ├── database.py
+│   ├── schemas.py
+│   ├── auth_service.py
+│   ├── model_service.py
+│   └── routers/
+│       ├── auth.py
+│       ├── training.py
+│       └── prediction.py
+│
+├── data/
+│   └── private_lessons_data.csv
+│
+├── models/
+│   └── (saved .pkl model files)
+│
+├── project_info.ipynb
+├── tokens_dashboard.py
+├── requirements.txt
+└── README.md
+4. Dataset
+The system works with one fixed dataset, stored as:
 
 bash
 Copy code
-python -m streamlit run tokens_dashboard.py
-Open the URL shown in the terminal (usually http://localhost:8501).
-
-Dataset and Jupyter Notebook
-CSV Dataset
-Path:
-
-text
-Copy code
 data/private_lessons_data.csv
-This is a fixed dataset simulating private lesson pricing, with columns:
+Columns include:
 
 subject
 
@@ -192,170 +80,97 @@ city
 
 teacher_age
 
-lesson_price
+lesson_price (label)
 
-Uses:
+All training and prediction logic assumes this schema.
 
-Training the machine learning models in the API
-
-EDA and visualizations in the Jupyter notebook
-
-Jupyter Notebook (EDA and Model Check)
-Path:
-
-text
-Copy code
-project_info.ipynb
-Contents:
-
-Loading the CSV dataset
-
-df.describe(include="all") and basic statistics
-
-Distribution of lesson prices
-
-Teacher experience and lesson duration distributions
-
-Correlation heatmap for numeric features
-
-Box plots and bar charts by subject, level, and city
-
-A small linear regression model trained inside the notebook, with:
-
-Train/test split
-
-Evaluation metrics
-
-Interpretation of the results
-
-The notebook is the “report” part of the project, demonstrating that the dataset is consistent and that the learned model fits the data.
-
-Project Structure
-text
-Copy code
-19.10.2025/
-│
-├── app/
-│   ├── __init__.py
-│   ├── main.py              # FastAPI entry point
-│   ├── config.py            # Paths, JWT config, token pricing
-│   ├── database.py          # SQLite connection and user table
-│   ├── schemas.py           # Pydantic request/response models
-│   ├── auth_service.py      # Authentication, JWT, token checks
-│   ├── model_service.py     # ML training, saving models, metadata
-│   └── routers/
-│       ├── auth.py          # /auth/... endpoints
-│       ├── training.py      # /training/... endpoints
-│       └── prediction.py    # /models/... endpoints
-│
-├── data/
-│   └── private_lessons_data.csv   # Main dataset used by both API and notebook
-│
-├── models/
-│   └── (generated .pkl files after training)
-│
-├── project_info.ipynb       # EDA + mini ML experiment in Jupyter
-├── tokens_dashboard.py      # Streamlit dashboard for users & tokens
-├── requirements.txt         # Python dependencies
-└── README.md
-Installation and Usage
-1. Create and Activate Virtual Environment
+5. Running the Project
+Step 1 — Create & Activate Virtual Environment
 bash
 Copy code
 python -m venv .venv
-On Windows:
-
-bash
-Copy code
-.venv\Scripts\activate
-2. Install Dependencies
+source .venv/bin/activate     # Mac/Linux
+.venv\Scripts\activate        # Windows
+Step 2 — Install Dependencies
 bash
 Copy code
 pip install -r requirements.txt
-3. Run the FastAPI Server
+Step 3 — Start FastAPI Server
 bash
 Copy code
 uvicorn app.main:app --reload
-Open the API docs (Swagger UI):
-
-text
+Step 4 — Open API Documentation
+arduino
 Copy code
 http://127.0.0.1:8000/docs
-4. Authentication Flow
-Go to POST /auth/signup
-
-Register a user, e.g.:
-
-json
-Copy code
-{
-  "username": "student_demo",
-  "password": "ab1234"
-}
-Go to POST /auth/login
-
-Log in with the same credentials.
-
-Copy the access_token value from the response.
-
-Click the Authorize button in Swagger (top right).
-
-Paste the token only (no “Bearer ” prefix).
-
-Confirm.
-
-Now all protected endpoints will use this token.
-
-5. Manage Tokens
-Check current tokens:
-GET /auth/tokens
-
-Add tokens (for testing):
-POST /auth/add_tokens
+6. Authentication Flow (JWT)
+1. Register
+POST /auth/signup
 
 json
 Copy code
 {
-  "amount": 20
+  "username": "user1",
+  "password": "pass1234"
 }
-6. Train a Model
-Go to:
+2. Login
+POST /auth/login
 
+Returns:
+
+json
+Copy code
+{
+  "access_token": "<TOKEN>",
+  "token_type": "bearer"
+}
+3. Add Token in Swagger
+Click Authorize → Insert only the token (no “Bearer”).
+
+7. Training a Model
+Endpoint:
+
+bash
+Copy code
 POST /training/train
+Parameters (form-data):
 
-Fill in:
+file = private_lessons_data.csv
 
-Upload data/private_lessons_data.csv as file
+model_name = linear
 
-Set model_name to one of:
+model_params = {}
 
-linear
+Expected Response:
 
-decision_tree
-
-random_forest
-
-Optional: model_params as JSON string (or leave empty)
-
-Execute and check the response for:
-
-model_id
-
-metrics (r2, mae, mse, rmse – all with two decimal places)
-
-7. List Trained Models
-Go to:
-
+json
+Copy code
+{
+  "status": "success",
+  "message": "Model was trained successfully and is ready for predictions.",
+  "model_info": {
+    "model_name": "linear",
+    "n_samples": 100,
+    "metrics": {
+      "r2": 0.96,
+      "mae": 5.17,
+      "rmse": 7.43
+    }
+  }
+}
+8. Listing All Models
+bash
+Copy code
 GET /models
+Returns all trained models with metrics.
 
-You will get a list of all models and their metrics.
+9. Making Predictions
+Endpoint:
 
-8. Make a Prediction
-Go to:
-
-POST /models/predict/{model_name} (e.g. /models/predict/linear)
-
-Request body example:
+bash
+Copy code
+POST /models/predict/linear
+Body:
 
 json
 Copy code
@@ -369,103 +184,41 @@ Copy code
     "city": "Tel Aviv"
   }
 }
-Response example:
-
-json
-Copy code
-{
-  "model_name": "linear",
-  "model_id": 2,
-  "prediction": 163.04
-}
-9. Run the Streamlit Dashboard
-In a separate terminal (with the virtual environment active):
+10. Streamlit Admin Dashboard
+Run:
 
 bash
 Copy code
 python -m streamlit run tokens_dashboard.py
-Open the URL shown in the console (e.g. http://localhost:8501)
-You should see:
+Shows:
 
-A table of users
+all users
 
-Their token balances
+token balances
 
-Basic summary metrics
+total token statistics
 
-Future Improvements
-Some possible extensions for this project:
+11. Future Improvements
+Add more ML algorithms (SVR, XGBoost).
 
-Support additional model types (e.g. XGBoost, neural networks)
+Add feature scaling & preprocessing selection.
 
-Add more flexible configuration for:
+Add database migration (Alembic).
 
-Feature selection
+Streamlit interface for training and prediction.
 
-Train/test split
+User roles (admin / user).
 
-Hyperparameter tuning
+Docker containerization.
 
-Extend dataset validation and add automatic checks for:
+12. Notes
+Dataset is fixed and schema-dependent.
 
-Missing values
+JWT tokens must be renewed after expiration.
 
-Outliers
+Models are saved automatically in /models/ with metadata.
 
-Class imbalance (for classification tasks)
+Errors are logged to app/logs/server.log.
 
-Add an admin-only FastAPI router for:
 
-Viewing logs
-
-Resetting user tokens
-
-Deleting models
-
-Extend the Streamlit dashboard to:
-
-Compare models by metrics
-
-Plot training history and errors
-
-Add automated tests and CI/CD pipeline
-
-Add Docker support for easier deployment
-
-markdown
-Copy code
-
----
-
-## איך להכניס את זה ל-GitHub (רק דרך הדפדפן)
-
-1. היכנסי ל-GitHub לריפו שלך:  
-   `https://github.com/karinshaham1302/19.10.2025`
-
-2. ברשימת הקבצים, לחצי על `README.md`.
-
-3. בצד ימין למעלה של הקובץ, לחצי על כפתור העיפרון **Edit this file**.
-
-4. מחקי את כל הטקסט הקיים (Ctrl+A → Delete).
-
-5. חזרי לכאן, סמני את כל ה-README שבקודבלוק הגדול למעלה (מ`# Machine Learning & FastAPI Final Project` ועד סוף הקובץ), והעתיקי.
-
-6. הדביקי ב-GitHub בתוך חלון העריכה.
-
-7. מעל הטופס של ה-Commit, לחצי על לשונית **Preview** כדי לראות איך זה נראה מעוצב:
-   - כותרות גדולות
-   - קוד בצבע אפור
-   - עץ תיקיות מיושר  
-   אם זה נראה טוב – ממשיכים.
-
-8. למטה, בשדה **Commit message** אפשר לכתוב משהו כמו:  
-   `Update README with full project documentation`
-
-9. סמני את האפשרות **Commit directly to the main branch**.
-
-10. לחצי על **Commit changes**.
-
-וזהו – ה-README החדש יופיע יפה, מסודר, עם ה-CSV וה-Jupyter, בלי סמלים מעצבנים ובלי בלגן. 💪  
-
-אם אחרי שתדביקי אותו משהו עדיין ייראה לא טוב (שורות שנשברות מוזר, קטע מסוים לא ברור), תצלמי מסך ונעבור על זה ביחד שורה-שורה.
 
