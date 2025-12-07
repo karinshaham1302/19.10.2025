@@ -1,188 +1,283 @@
-📄 README — Machine Learning & FastAPI Final Project
+Machine Learning & FastAPI Final Project
+Quick Summary (TL;DR)
 
-This project implements an end-to-end machine-learning system using FastAPI, including dataset upload, model training, prediction, authentication, token management, and a Streamlit dashboard for monitoring usage.
+This project implements a complete machine-learning pipeline delivered over a FastAPI server.
+It supports:
 
-1. Project Structure
-19.10.2025/
-│
-├── app/
-│   ├── routers/
-│   │   ├── auth.py
-│   │   ├── training.py
-│   │   └── prediction.py
-│   │
-│   ├── models/                  # Trained ML models (.pkl)
-│   ├── logs/                    # Log files
-│   │
-│   ├── __init__.py
-│   ├── auth_service.py
-│   ├── model_service.py
-│   ├── database.py
-│   ├── schemas.py
-│   ├── config.py
-│   └── main.py
-│
-├── data/
-│   └── private_lessons_data.csv
-│
-├── project_info.ipynb
-├── tokens_dashboard.py
-├── requirements.txt
-└── README.md
+Uploading a CSV dataset
 
-2. Environment Setup
-2.1 Create virtual environment
-python -m venv .venv
+Training ML models (Linear Regression, Decision Tree, Random Forest)
 
-2.2 Activate environment (Windows)
-.venv\Scripts\activate
+Saving models with metadata
 
-2.3 Install dependencies
-pip install -r requirements.txt
+Making predictions using the latest trained model
 
-3. Run the FastAPI Server
+Full authentication using JWT
+
+Token-based usage control (1 token for training, 5 tokens for prediction)
+
+A Streamlit dashboard for monitoring users and token balances
+
+A predefined dataset structure for private-lessons pricing
+
+Start the API server:
+
 uvicorn app.main:app --reload
 
 
-Swagger UI:
+Open the API interface:
 
 http://127.0.0.1:8000/docs
 
-4. Authentication (JWT)
-4.1 Sign up
-{
-  "username": "user1",
-  "password": "pass1234"
-}
 
-4.2 Log in
+Start the Streamlit dashboard:
 
-Returns JWT:
+python -m streamlit run tokens_dashboard.py
 
-{
-  "access_token": "<JWT_TOKEN>"
-}
+How the System Works
+API Workflow Overview
 
-4.3 Authorizing in Swagger
+The backend is composed of three main workflows: authentication, model training, and prediction.
 
-Press Authorize and paste only the token (without “Bearer”).
+1. Authentication Workflow
 
-5. Token System
+User registers via /auth/signup.
 
-Model training → cost: 1 token
+User logs in via /auth/login.
 
-Model prediction → cost: 5 tokens
+The server returns a JWT token.
 
-5.1 Check tokens
-GET /auth/tokens
+The user pastes only the token into the Swagger "Authorize" window.
 
-5.2 Add tokens
-{
-  "amount": 20
-}
+All protected endpoints require this token.
 
-6. Training a Model
+Purpose:
 
-Endpoint:
+Secure model operations
 
-POST /training/train
+Identify each user
 
+Ensure that training/prediction actions are tracked
 
-Parameters:
+2. Token System Workflow
 
-file (CSV)
+Each operation costs tokens:
 
-model_name (linear, decision_tree, random_forest)
+Operation	Cost
+Model Training	1 token
+Prediction	5 tokens
 
-model_params (optional JSON)
+Process:
 
-All metrics (r², MAE, MSE, RMSE) are stored and rounded to two decimal places.
+Before any action, the system checks whether the user has enough tokens.
 
-7. Prediction
+If not, the API returns a 403 error.
 
-Endpoint:
+After a successful operation, the tokens are deducted.
 
-POST /models/predict/{model_name}
+3. Model Training Workflow (POST /training/train)
 
+User uploads the CSV file.
 
-Example request:
+Backend validates the dataset schema.
 
-{
-  "data": {
-    "subject": "math",
-    "student_level": "high_school",
-    "lesson_minutes": 60,
-    "teacher_experience_years": 5,
-    "is_online": "yes",
-    "city": "Tel Aviv"
-  }
-}
+Preprocessing step:
 
+OneHotEncoder for categorical columns
 
-Example response:
+Passthrough for numeric columns
 
-{
-  "model_name": "linear",
-  "model_id": 2,
-  "prediction": 163.04
-}
+The selected model is created (Linear Regression, Decision Tree, Random Forest).
 
-8. System Flow (How It Works)
-User → Login → JWT
-          │
-          ▼
-   Authorize in Swagger
-          │
-          ▼
- Upload CSV → Train Model → Save .pkl
-          │
-          ▼
- Make Prediction (tokens deducted)
-          │
-          ▼
- Streamlit dashboard for monitoring
+The model is trained on the dataset.
 
-9. Streamlit Dashboard
+Evaluation metrics are computed:
 
-Run:
+R²
+
+MAE
+
+MSE
+
+RMSE
+(all rounded to two decimal places)
+
+The trained model is saved as a .pkl file.
+
+Metadata is stored in models_metadata.json.
+
+Output includes model ID, full metadata, and evaluation metrics.
+
+4. Prediction Workflow (POST /models/predict/{model_name})
+
+User submits a JSON object with feature values.
+
+System verifies JWT authentication.
+
+System verifies user tokens (requires 5).
+
+The backend loads the latest model for the given model name.
+
+A prediction is generated, rounded to two decimal places.
+
+System deducts 5 tokens.
+
+Returns the predicted value.
+
+5. Streamlit Monitoring Dashboard
+
+A small dashboard used for viewing system usage and user token balances.
+
+Run with:
 
 python -m streamlit run tokens_dashboard.py
 
 
 Displays:
 
-Users
+All users
 
-Token balances
+Token counts per user
 
-10. Future Improvements
+Dataset and Notebook
+CSV Dataset
 
-Add advanced ML algorithms (XGBoost, SVM, Gradient Boosting)
+The project uses a fixed dataset:
 
-Add batch prediction endpoint
+data/private_lessons_data.csv
 
-Add admin role + permission tiers
 
-Add frontend UI
+It contains simulated private-lesson pricing data with the following columns:
 
-Add Docker deployment
+subject
 
-Automatic feature/label detection
+student_level
 
-11. Notes
+lesson_minutes
 
-Dataset used: private_lessons_data.csv
+teacher_experience_years
 
-Schema is predefined to ensure consistent predictions
+is_online
 
-JWT secures access to protected endpoints
+city
 
-All results are rounded to two decimal places
+teacher_age
 
-✔ גרסה מקוצרת (Summary)
-FastAPI ML server:
-- CSV upload → train model
-- Predict using saved models
-- JWT login
-- Token-based usage control
-- Streamlit monitoring dashboard
+lesson_price
+
+This dataset is used for:
+
+Exploratory Data Analysis (EDA)
+
+Model training
+
+Model evaluation
+
+Jupyter Notebook (EDA)
+
+Full exploratory analysis appears in:
+
+project_info.ipynb
+
+
+It includes:
+
+Data loading
+
+Summary statistics
+
+Visualizations (price distribution, correlations, subject effects, and more)
+
+A small ML model evaluation replicating the API logic
+
+Project Structure
+19.10.2025/
+│
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── config.py
+│   ├── database.py
+│   ├── schemas.py
+│   ├── auth_service.py
+│   ├── model_service.py
+│   ├── routers/
+│   │   ├── auth.py
+│   │   ├── training.py
+│   │   └── prediction.py
+│
+├── data/
+│   └── private_lessons_data.csv
+│
+├── models/
+│   └── (automatically saved .pkl model files)
+│
+├── project_info.ipynb
+├── tokens_dashboard.py
+├── requirements.txt
+└── README.md
+
+Installation & Usage
+1. Create and Activate Virtual Environment
+python -m venv .venv
+.venv\Scripts\activate        (Windows)
+
+
+Install dependencies:
+
+pip install -r requirements.txt
+
+2. Run the API Server
+uvicorn app.main:app --reload
+
+
+Open Swagger UI:
+
+http://127.0.0.1:8000/docs
+
+3. Authentication Steps
+
+Sign up: /auth/signup
+
+Log in: /auth/login
+
+Copy the returned token
+
+Click “Authorize” in Swagger and paste the token only
+
+4. Train a Model
+
+Upload the CSV and choose a model type via /training/train.
+
+5. Get Available Models
+GET /models
+
+6. Make a Prediction
+
+Send a JSON with feature values to /models/predict/{model_name}.
+
+Future Improvements
+
+Possible enhancements:
+
+Support additional model types (XGBoost, Neural Networks).
+
+Add data preprocessing options (scaling, feature selection).
+
+Add detailed training history visualization.
+
+Add admin panel for user management.
+
+Extend Streamlit dashboard to include:
+
+Logs viewer
+
+Model comparison
+
+Error analysis
+
+Automatic dataset validation and anomaly detection.
+
+CI/CD pipeline for testing and deployment.
+
+Docker support for containerized deployment.
