@@ -65,18 +65,21 @@ def predict_with_latest_model(
     df = pd.DataFrame([request.data])
 
     try:
-        prediction = pipeline.predict(df)[0]
+        # Raw prediction from the model
+        prediction_raw = pipeline.predict(df)[0]
+        # Round prediction to 2 decimal places for nicer API output
+        prediction_value = round(float(prediction_raw), 2)
     except Exception as exc:
         logger.exception("Prediction failed")
         raise HTTPException(status_code=400, detail=f"Prediction failed: {exc}")
 
     logger.info(
         f"User {current_user['username']} requested prediction with model "
-        f"'{model_name}' (id={record['model_id']}): {request.data} -> {prediction}"
+        f"'{model_name}' (id={record['model_id']}): {request.data} -> {prediction_value}"
     )
 
     return PredictResponse(
         model_name=record["model_name"],
         model_id=record["model_id"],
-        prediction=float(prediction),
+        prediction=prediction_value,
     )

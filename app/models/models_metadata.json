@@ -1,1 +1,100 @@
-[]
+[
+  {
+    "model_id": 1,
+    "model_name": "linear",
+    "model_type": "LinearRegression",
+    "trained_at": "2025-12-07T10:18:12.390152",
+    "features_used": [
+      "subject",
+      "student_level",
+      "lesson_minutes",
+      "teacher_experience_years",
+      "is_online",
+      "city"
+    ],
+    "label_column": "lesson_price",
+    "n_samples": 100,
+    "categorical_columns": [
+      "subject",
+      "student_level",
+      "is_online",
+      "city"
+    ],
+    "numerical_columns": [
+      "lesson_minutes",
+      "teacher_experience_years"
+    ],
+    "metrics": {
+      "r2": 0.9614597655284883,
+      "mae": 5.174395664836247,
+      "mse": 52.82661763717018
+    },
+    "model_path": "C:\\PycharmProjects\\19.10.2025\\app\\models\\linear_20251207_101812.pkl"
+  },
+  {
+    "model_id": 2,
+    "model_name": "linear",
+    "model_type": "LinearRegression",
+    "trained_at": "2025-12-07T12:03:11.824809",
+    "features_used": [
+      "subject",
+      "student_level",
+      "lesson_minutes",
+      "teacher_experience_years",
+      "is_online",
+      "city"
+    ],
+    "label_column": "lesson_price",
+    "n_samples": 100,
+    "categorical_columns": [
+      "subject",
+      "student_level",
+      "is_online",
+      "city"
+    ],
+    "numerical_columns": [
+      "lesson_minutes",
+      "teacher_experience_years"
+    ],
+    "metrics": {
+      "r2": 0.96,
+      "mae": 5.17,
+      "mse": 52.83,
+      "rmse": 7.27
+    },
+    "model_path": "C:\\PycharmProjects\\19.10.2025\\app\\models\\linear_20251207_120311.pkl"
+  },
+  {
+    "model_id": 3,
+    "model_name": "linear",
+    "model_type": "LinearRegression",
+    "trained_at": "2025-12-07T12:46:52.692616",
+    "features_used": [
+      "subject",
+      "student_level",
+      "lesson_minutes",
+      "teacher_experience_years",
+      "is_online",
+      "city"
+    ],
+    "label_column": "lesson_price",
+    "n_samples": 100,
+    "categorical_columns": [
+      "subject",
+      "student_level",
+      "is_online",
+      "city"
+    ],
+    "numerical_columns": [
+      "lesson_minutes",
+      "teacher_experience_years"
+    ],
+    "metrics": {
+      "r2": 0.96,
+      "mae": 5.17,
+      "mse": 52.83,
+      "rmse": 7.27
+    },
+    "model_path": "C:\\PycharmProjects\\19.10.2025\\app\\models\\linear_20251207_124652.pkl"
+  }
+]
