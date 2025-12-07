@@ -1,32 +1,32 @@
 # Machine Learning & FastAPI Final Project
 
-This project implements a complete machine learning pipeline served through a FastAPI backend.  
-It supports training regression models on a predefined private-lessons dataset and making predictions through authenticated API calls using JWT tokens.  
-The system also includes a token-based usage mechanism and an admin dashboard (Streamlit).
+This project implements a complete, production-style machine learning pipeline served via a FastAPI backend.  
+It supports training regression models on a predefined dataset and performing predictions through authenticated API calls using JWT tokens.  
+A token-based usage system and a Streamlit dashboard are also included.
 
 ---
 
 ## 1. TL;DR — Short Version
 
-- Upload dataset → Train ML model (Linear, Decision Tree, Random Forest).  
-- System validates schema automatically (fixed dataset structure).  
+- Upload `private_lessons_data.csv` → Train ML model (Linear, Decision Tree, Random Forest).  
+- Schema is fixed and validated automatically.  
 - Model is saved with full metadata (features, label, metrics).  
 - JWT authentication required.  
-- Each API action consumes user tokens.  
-- Prediction is performed using the latest trained model.  
-- Admin dashboard (Streamlit) displays all users and their token balance.
+- Each API call consumes user tokens.  
+- Predictions use the **latest trained model**.  
+- Streamlit dashboard displays users + token balances.
 
 ---
 
 ## 2. How It Works — System Flow
 
-1. **User registers** (`/auth/signup`)  
-2. **User logs in** and receives a **JWT access token** (`/auth/login`)  
-3. User uploads `private_lessons_data.csv` to **train a model** (`/training/train`)  
-4. Model is trained, evaluated, saved to `/models/` and logged in metadata  
-5. User requests **prediction** (`/models/predict/{model_name}`)  
-6. System loads the latest trained model and returns a predicted price  
-7. All actions consume tokens (predict = 5 tokens)
+1. User signs up (`/auth/signup`)
+2. User logs in → receives JWT token (`/auth/login`)
+3. User uploads `private_lessons_data.csv` to train (`/training/train`)
+4. Model is trained, evaluated, saved into `/models/`
+5. User performs prediction (`/models/predict/{model_name}`)
+6. Server loads latest trained model → returns predicted lesson price  
+7. Prediction consumes 5 tokens (configurable)
 
 ---
 
@@ -52,102 +52,94 @@ The system also includes a token-based usage mechanism and an admin dashboard (S
 │   └── private_lessons_data.csv
 │
 ├── models/
-│   └── (saved .pkl model files)
+│   └── (saved .pkl models)
 │
 ├── project_info.ipynb
 ├── tokens_dashboard.py
 ├── requirements.txt
 └── README.md
 4. Dataset
-The system works with one fixed dataset, stored as:
+This project uses a predefined schema for lesson-pricing prediction:
 
-bash
-Copy code
-data/private_lessons_data.csv
-Columns include:
+Column	Type
+subject	string
+student_level	string
+lesson_minutes	int
+teacher_experience_years	int
+is_online	string
+city	string
+teacher_age	int
+lesson_price (label)	float
 
-subject
+Training strictly requires this structure.
 
-student_level
-
-lesson_minutes
-
-teacher_experience_years
-
-is_online
-
-city
-
-teacher_age
-
-lesson_price (label)
-
-All training and prediction logic assumes this schema.
-
-5. Running the Project
-Step 1 — Create & Activate Virtual Environment
+5. Setup & Run
+Create Virtual Environment
 bash
 Copy code
 python -m venv .venv
-source .venv/bin/activate     # Mac/Linux
-.venv\Scripts\activate        # Windows
-Step 2 — Install Dependencies
+Activate:
+
+Windows
+
+bash
+Copy code
+.venv\Scripts\activate
+Mac / Linux
+
+bash
+Copy code
+source .venv/bin/activate
+Install Dependencies
 bash
 Copy code
 pip install -r requirements.txt
-Step 3 — Start FastAPI Server
+Run API Server
 bash
 Copy code
 uvicorn app.main:app --reload
-Step 4 — Open API Documentation
+Open documentation:
+
 arduino
 Copy code
 http://127.0.0.1:8000/docs
-6. Authentication Flow (JWT)
-1. Register
-POST /auth/signup
-
+6. Authentication (JWT)
+Sign Up
 json
 Copy code
+POST /auth/signup
 {
   "username": "user1",
   "password": "pass1234"
 }
-2. Login
-POST /auth/login
-
-Returns:
-
+Log In → Get JWT
 json
 Copy code
+POST /auth/login
 {
   "access_token": "<TOKEN>",
   "token_type": "bearer"
 }
-3. Add Token in Swagger
-Click Authorize → Insert only the token (no “Bearer”).
+Add the Token in Swagger
+Click Authorize → Paste only the token (no “Bearer”).
 
-7. Training a Model
-Endpoint:
-
+7. Train a Model
+Endpoint
 bash
 Copy code
 POST /training/train
-Parameters (form-data):
+Form-data Fields
+file: private_lessons_data.csv
 
-file = private_lessons_data.csv
+model_name: linear
 
-model_name = linear
+model_params: {} (or any JSON)
 
-model_params = {}
-
-Expected Response:
-
+Example Response
 json
 Copy code
 {
   "status": "success",
-  "message": "Model was trained successfully and is ready for predictions.",
   "model_info": {
     "model_name": "linear",
     "n_samples": 100,
@@ -158,20 +150,16 @@ Copy code
     }
   }
 }
-8. Listing All Models
-bash
+8. List All Trained Models
+text
 Copy code
 GET /models
-Returns all trained models with metrics.
-
-9. Making Predictions
-Endpoint:
-
+9. Make Prediction
+Endpoint
 bash
 Copy code
 POST /models/predict/linear
-Body:
-
+Request Body Example
 json
 Copy code
 {
@@ -190,35 +178,34 @@ Run:
 bash
 Copy code
 python -m streamlit run tokens_dashboard.py
-Shows:
+Dashboard displays:
 
-all users
+All users
 
-token balances
+Token balances
 
-total token statistics
+Usage overview
 
 11. Future Improvements
-Add more ML algorithms (SVR, XGBoost).
+Add model choices: SVR, XGBoost, Gradient Boosting
 
-Add feature scaling & preprocessing selection.
+Add feature-scaling options
 
-Add database migration (Alembic).
+Add admin roles & rate limiting
 
-Streamlit interface for training and prediction.
+Dockerize entire stack
 
-User roles (admin / user).
+Build full web UI for uploading datasets and performing predictions
 
-Docker containerization.
+Add Alembic migrations for database evolution
 
 12. Notes
-Dataset is fixed and schema-dependent.
+Dataset schema is fixed for this project
 
-JWT tokens must be renewed after expiration.
+JWT token must be refreshed when expired
 
-Models are saved automatically in /models/ with metadata.
+All saved models are stored under /models/
 
-Errors are logged to app/logs/server.log.
+Logging is stored under logs/ (auto-created)
 
-
-
+Copy code
