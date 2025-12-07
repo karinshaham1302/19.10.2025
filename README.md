@@ -1,34 +1,38 @@
 # Machine Learning & FastAPI Final Project
 
-This project implements a complete machine-learning workflow using FastAPI.  
-It includes dataset handling, model training, prediction endpoints, JWT authentication,  
-token-based usage control, and an admin Streamlit dashboard.
+A complete production-style machine learning pipeline served via FastAPI.  
+Includes data validation, model training, prediction endpoints, JWT authentication,  
+a token-based usage system, and a Streamlit admin dashboard.
 
 ---
 
-## 1. TL;DR — Short Version
-- Train ML models using a predefined dataset (`private_lessons_data.csv`)
-- Supported models: **Linear Regression**, **Decision Tree**, **Random Forest**
-- Schema is fixed and validated automatically
-- JWT Authentication is required
-- API actions consume user tokens (train = 1, predict = 5)
-- Predictions use the **latest trained model**
-- Streamlit dashboard shows all users and their tokens
+## Overview
+
+This project lets users:
+
+- Train machine-learning models on a predefined dataset  
+- Make predictions using trained models  
+- Authenticate using JWT tokens  
+- Consume tokens for API operations (training, prediction)  
+- View user/token status in an admin dashboard  
+
+Fully implemented with **FastAPI**, **scikit-learn**, **SQLite**, and **Streamlit**.
 
 ---
 
-## 2. How It Works — System Flow
+## How It Works
+
 1. User signs up (`/auth/signup`)
-2. User logs in and receives a **JWT token**
-3. User uploads dataset and trains a model (`/training/train`)
-4. Model is saved into `/models/` with metadata
-5. User sends input values to `/models/predict/{model_name}`
-6. API loads the latest trained model and returns a prediction
-7. Token balance is updated accordingly
+2. User logs in → receives a JWT token
+3. User trains a model on the predefined dataset (`/training/train`)
+4. The model is saved with full metadata inside `/models/`
+5. The user sends prediction input to `/models/predict/{model_name}`
+6. The system loads the latest model and returns a **rounded prediction (2 decimals)**
+7. Token balance is updated according to action
 
 ---
 
-## 3. Project Structure
+## Project Structure
 
 ```text
 19.10.2025/
@@ -56,8 +60,8 @@ token-based usage control, and an admin Streamlit dashboard.
 ├── tokens_dashboard.py
 ├── requirements.txt
 └── README.md
-4. Dataset Schema
-The project uses this fixed dataset structure:
+Dataset Schema
+This project uses a predefined dataset with the following structure:
 
 Column	Type
 subject	string
@@ -69,81 +73,76 @@ city	string
 teacher_age	int
 lesson_price (label)	float
 
-Training strictly requires this schema.
-
-Dataset file location:
+Location:
 
 bash
 Copy code
 data/private_lessons_data.csv
-5. Environment Setup
-5.1 Create virtual environment
+Installation
+Create virtual environment
 bash
 Copy code
 python -m venv .venv
-5.2 Activate environment
-Windows:
+Activate environment
+Windows
 
 bash
 Copy code
 .venv\Scripts\activate
-Mac / Linux:
+Mac / Linux
 
 bash
 Copy code
 source .venv/bin/activate
-5.3 Install requirements
+Install dependencies
 bash
 Copy code
 pip install -r requirements.txt
-6. Run the FastAPI Server
+Run the Server
 bash
 Copy code
 uvicorn app.main:app --reload
-Swagger UI will be available at:
+Swagger UI:
 
 arduino
 Copy code
 http://127.0.0.1:8000/docs
-7. Authentication Workflow
-7.1 Sign Up
+Authentication
+Sign Up
 json
 Copy code
 {
   "username": "user1",
   "password": "pass1234"
 }
-7.2 Log In (returns JWT)
+Log In (returns JWT)
 json
 Copy code
 {
   "access_token": "<JWT_TOKEN>"
 }
-7.3 Use JWT in Swagger
-Click Authorize → paste only the token
+In Swagger → Click Authorize and paste only the token
 (no need to type "Bearer").
 
-8. Token System
+Token System
 Action	Cost
 Train model	1
 Predict	5
 
-8.1 Check token balance
+Check balance
 bash
 Copy code
 GET /auth/tokens
-8.2 Add tokens
+Add tokens
 bash
 Copy code
 POST /auth/add_tokens
-Body example:
-
 json
 Copy code
 {
   "amount": 20
 }
-9. Train a Model
+Training a Model
 Endpoint:
 
 bash
@@ -157,21 +156,25 @@ Copy code
   "model_name": "linear",
   "model_params": {}
 }
-Response returns:
+Metrics returned (rounded to 2 decimals):
 
-metrics (R², MAE, MSE, RMSE — all rounded to 2 decimals)
+R²
 
-model metadata
+MAE
 
-model path
+MSE
 
-10. Make a Prediction
+RMSE
+
+Model is saved into /models/.
+
+Making a Prediction
 Endpoint:
 
 bash
 Copy code
 POST /models/predict/linear
-Example request:
+Request example:
 
 json
 Copy code
@@ -185,7 +188,7 @@ Copy code
     "city": "Tel Aviv"
   }
 }
-Example response:
+Response example:
 
 json
 Copy code
@@ -194,41 +197,43 @@ Copy code
   "model_id": 2,
   "prediction": 163.04
 }
-Prediction is always returned rounded to two decimal places.
+Prediction is always returned with two decimal places.
 
-11. Streamlit Admin Dashboard
+Streamlit Dashboard
 Run:
 
 bash
 Copy code
 python -m streamlit run tokens_dashboard.py
-Dashboard displays:
+Dashboard shows:
 
 All users
 
-Remaining tokens per user
+Token balance per user
 
-12. Future Improvements
-Add advanced ML algorithms (XGBoost, SVM, Gradient Boosting)
+Future Improvements
+Add more ML models (XGBoost, SVM, Gradient Boosting)
 
 Batch prediction endpoint
 
-Admin role vs. user role
+Admin vs user roles
 
-Automatic inference of feature/label columns
+Automatic detection of features/labels
 
-Docker support
+Docker deployment
 
-Email notifications for low token balance
+Email alerts for low token balance
 
-Web UI for model training and prediction
+Full web UI for training & prediction
 
-13. Notes
-Jupyter notebook for exploration: project_info.ipynb
+Notes
+Notebook included: project_info.ipynb
 
-Dataset location: data/private_lessons_data.csv
+Dataset stored in: data/private_lessons_data.csv
 
-All predictions follow the predefined schema
+Model predictions depend on the fixed schema
 
-Authentication uses JWT for secure access
+Authentication uses JWT for all protected routes
 
+yaml
+Copy code
