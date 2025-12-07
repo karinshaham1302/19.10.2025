@@ -32,21 +32,24 @@ This project implements an end-to-end machine learning system for predicting pri
 
 19.10.2025/
 ├── app/
-│ ├── main.py
-│ ├── config.py
-│ ├── database.py
-│ ├── schemas.py
-│ ├── auth_service.py
-│ ├── model_service.py
-│ └── routers/
-│ ├── auth.py
-│ ├── training.py
-│ └── prediction.py
+│   ├── main.py
+│   ├── config.py
+│   ├── database.py
+│   ├── schemas.py
+│   ├── auth_service.py
+│   ├── model_service.py
+│   └── routers/
+│       ├── auth.py
+│       ├── training.py
+│       └── prediction.py
+│
 ├── data/
-│ └── private_lessons_data.csv
+│   └── private_lessons_data.csv
+│
 ├── models/
-│ ├── (.pkl model files)
-│ └── models_metadata.json
+│   ├── (.pkl model files)
+│   └── models_metadata.json
+│
 ├── project_info.ipynb
 ├── tokens_dashboard.py
 ├── requirements.txt
