@@ -1,75 +1,10 @@
-# 🧠 Machine Learning & FastAPI Final Project
+# Machine Learning & FastAPI Final Project
 
-FastAPI-based backend system for training machine learning models, managing users with JWT authentication, handling token-based usage limitations, and performing predictions using trained models.
-
-This project demonstrates a complete ML pipeline with a production-style API, including authentication, model storage, metadata tracking, token economy, logging, and an optional Streamlit dashboard.
+This project implements a complete machine-learning workflow using FastAPI, including dataset upload, model training, prediction, authentication, token management, and a Streamlit dashboard for monitoring usage.
 
 ---
 
-## 🚀 Features
-
-### 🔐 **Authentication & Authorization**
-- User signup & login using **JWT tokens**
-- Secure endpoints with `Bearer <token>`
-- Token-based usage limits:
-  - **Training** → 1 token  
-  - **Prediction** → 5 tokens  
-
-### 🤖 **Machine Learning Capabilities**
-- Train models from CSV files  
-- Supported models:
-  - Linear Regression  
-  - Decision Tree  
-  - Random Forest  
-- Automatic preprocessing (OneHotEncoder + numeric passthrough)
-- Saves model + metadata into `/app/models/`
-- Evaluation metrics:
-  - R², MAE, MSE, RMSE (rounded to 2 decimals)
-
-### 📊 **Prediction API**
-- Predict with the **latest trained model**  
-- Input via JSON `{ "data": { ... } }`
-- Validates required features automatically
-
-### 📁 **Model Metadata Tracking**
-Stored in `models_metadata.json`:
-- model_id  
-- model_name  
-- model_type  
-- trained_at  
-- features used  
-- label column  
-- metrics  
-- model_path  
-
-### 💳 **Token Economy**
-- `/auth/tokens` — check balance  
-- `/auth/add_tokens` — add tokens  
-- `/auth/remove_user` — delete user  
-
-### 📉 **Streamlit Dashboard (Optional)**
-`tokes_dashboard.py` displays:
-- All users  
-- Remaining tokens  
-
----
-
-## 🛠️ Tech Stack
-
-| Technology | Purpose |
-|-----------|---------|
-| **FastAPI** | REST API server |
-| **Scikit-learn** | Training ML models |
-| **Pandas** | Dataset manipulation |
-| **Passlib (bcrypt)** | Password hashing |
-| **SQLite** | User & token storage |
-| **JWT (PyJWT)** | Authentication |
-| **Uvicorn** | ASGI server |
-| **Streamlit** | Optional dashboard |
-
----
-
-## 📂 Project Structure
+## 1. Project Structure
 
 19.10.2025/
 │
@@ -79,8 +14,9 @@ Stored in `models_metadata.json`:
 │ │ ├── training.py
 │ │ └── prediction.py
 │ │
-│ ├── models/ # Saved .pkl models
-│ ├── logs/ # Log files (if generated)
+│ ├── models/ # Stored trained ML models (.pkl)
+│ ├── logs/ # Application logs (optional)
+│ │
 │ ├── init.py
 │ ├── auth_service.py
 │ ├── model_service.py
@@ -102,28 +38,69 @@ Copy code
 
 ---
 
-## 📦 Installation
+## 2. Environment Setup
 
-### 1️⃣ Create & activate virtual environment
-```bash
+### 2.1 Create virtual environment
+
 python -m venv .venv
-source .venv/bin/activate      # Mac/Linux
-.venv\Scripts\activate         # Windows
-2️⃣ Install dependencies
-bash
+
+shell
 Copy code
+
+### 2.2 Activate virtual environment (Windows)
+
+.venv\Scripts\activate
+
+shell
+Copy code
+
+### 2.3 Install project dependencies
+
 pip install -r requirements.txt
-3️⃣ Run FastAPI server
-bash
+
+yaml
 Copy code
+
+---
+
+## 3. Running the FastAPI Server
+
+Start the API server:
+
 uvicorn app.main:app --reload
-4️⃣ Open Swagger UI
+
 arduino
 Copy code
+
+Swagger UI is available at:
+
 http://127.0.0.1:8000/docs
-🔐 Authentication Flow
-⭐ Signup
+
+yaml
+Copy code
+
+---
+
+## 4. Authentication (JWT)
+
+### 4.1 Sign up
+
 POST /auth/signup
+
+css
+Copy code
+
+Example body:
+```json
+{
+  "username": "user1",
+  "password": "pass1234"
+}
+4.2 Log in and receive JWT
+bash
+Copy code
+POST /auth/login
+Example body:
 
 json
 Copy code
@@ -131,44 +108,70 @@ Copy code
   "username": "user1",
   "password": "pass1234"
 }
-⭐ Login
-POST /auth/login
-Copy the access_token from the response.
-
-⭐ Add authentication to Swagger
-Click “Authorize” → paste ONLY the token (no need to write "Bearer").
-
-📊 Model Training
-Endpoint
-POST /training/train
-
-Example form-data:
-ini
-Copy code
-file = private_lessons_data.csv
-model_name = linear
-model_params = {"fit_intercept": true}
-Response example:
+Response:
 
 json
 Copy code
 {
-  "status": "success",
-  "message": "Model was trained successfully and is ready for predictions.",
-  "model_info": {
-    "model_id": 2,
-    "model_name": "linear",
-    "r2": 0.96,
-    "mae": 5.17,
-    "mse": 52.83,
-    "rmse": 7.27
-  }
+  "access_token": "<JWT_TOKEN>"
 }
-🎯 Predictions
-Endpoint
-POST /models/predict/{model_name}
+4.3 Authorizing in Swagger
+In Swagger UI, click Authorize and paste only the token (without the word "Bearer").
 
-Example body
+5. Token System
+Training a model consumes 1 token
+
+Making a prediction consumes 5 tokens
+
+5.1 Check remaining tokens
+bash
+Copy code
+GET /auth/tokens
+5.2 Add tokens
+bash
+Copy code
+POST /auth/add_tokens
+Body:
+
+json
+Copy code
+{
+  "amount": 20
+}
+6. Model Training
+Endpoint:
+
+bash
+Copy code
+POST /training/train
+Form-data fields:
+
+file: CSV dataset
+
+model_name: linear / decision_tree / random_forest
+
+model_params: optional JSON
+
+Response includes metrics:
+
+r2
+
+mae
+
+mse
+
+rmse
+
+And saved model path + metadata.
+
+7. Making Predictions
+Endpoint:
+
+bash
+Copy code
+POST /models/predict/{model_name}
+Example request:
+
 json
 Copy code
 {
@@ -181,7 +184,8 @@ Copy code
     "city": "Tel Aviv"
   }
 }
-Example response
+Example response:
+
 json
 Copy code
 {
@@ -189,93 +193,40 @@ Copy code
   "model_id": 2,
   "prediction": 163.04
 }
-🔍 Check Available Models
-GET /models/
+Prediction is returned rounded to two decimal places.
 
-Output:
+8. Streamlit Dashboard
+Run the dashboard:
 
-json
-Copy code
-{
-  "models": [
-    {
-      "model_id": 1,
-      "model_name": "linear",
-      "model_type": "LinearRegression",
-      "trained_at": "2025-12-07T10:18:12.390152",
-      "r2": 0.96,
-      "mae": 5.17,
-      "mse": 52.83
-    }
-  ]
-}
-🧮 Token System
-Check tokens
-GET /auth/tokens
-
-Add tokens
-POST /auth/add_tokens
-
-json
-Copy code
-{
-  "amount": 20
-}
-Delete user
-DELETE /auth/remove_user
-
-json
-Copy code
-{
-  "username": "user1",
-  "password": "pass1234"
-}
-🧰 Optional: Streamlit Dashboard
-Run:
-
-bash
+arduino
 Copy code
 python -m streamlit run tokens_dashboard.py
-Shows:
+The dashboard displays:
 
 All users
 
-Tokens remaining
+Remaining tokens per user
 
-🚀 Future Improvements
-These enhancements can elevate the project to production-level quality:
+9. Future Improvements
+Add advanced ML algorithms (XGBoost, SVM, Gradient Boosting).
 
-✔ Add Logistic Regression, SVM, XGBoost
-Expands model capabilities and allows classification tasks.
+Add batch prediction endpoint.
 
-✔ Add ML model versioning system
-Choose model version instead of “latest only”.
+Add role-based access (Admin vs User).
 
-✔ Add role-based permissions
-Admin vs standard users.
+Add a frontend UI for model training and prediction.
 
-✔ Add Docker deployment
-Package the API to run anywhere.
+Add email notifications for low token balance.
 
-✔ Add CI/CD pipeline
-Automatic testing before every push.
+Add Docker support for deployment.
 
-📝 Notes
-All metrics and predictions are rounded to 2 decimal places.
+Add automatic feature/label inference from datasets.
 
-JWT tokens must be reissued after expiration.
+10. Notes
+The dataset used in this project is private_lessons_data.csv, stored under /data.
 
-CSV structure is fixed to the private lessons dataset for the project.
+Model predictions and metrics remain consistent because the schema is predefined.
 
-🎉 Final Words
-This project demonstrates:
+Authentication uses JWT for secure access to protected endpoints.
 
-Full backend engineering
 
-Machine learning integration
-
-Secure authentication
-
-Deployment-ready API structure
-
-A complete, professional final project.
