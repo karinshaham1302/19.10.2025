@@ -1,40 +1,37 @@
-🌟 Machine Learning & FastAPI — Final Project
+# Machine Learning & FastAPI – Final Project
 
-מערכת מלאה ל־Machine Learning המשלבת FastAPI, אימות JWT, ניהול טוקנים, אימון מודלים, חיזוי מחירים למורים פרטיים ולוח ניהול (Streamlit).
+This project implements an end-to-end machine learning system for predicting private-lesson prices using:
+FastAPI, scikit-learn, JWT authentication, a token-based usage system, and a Streamlit admin dashboard.
 
-1. TL;DR (Summary)
+---
 
-שימוש בדataset קבוע: data/private_lessons_data.csv
+## 1. TLDR (Short Summary)
 
-אימון מודלים: Linear Regression, Decision Tree, Random Forest
+- Fixed dataset: `data/private_lessons_data.csv`
+- Train ML models: Linear Regression, Decision Tree, Random Forest
+- Make predictions via authenticated API calls
+- JWT-based authentication with per-user token balance
+- Models saved as `.pkl` files with full metadata and metrics
+- Streamlit dashboard shows users and tokens
 
-קריאות API מאובטחות עם JWT
+---
 
-כל פעולה צורכת טוקנים
+## 2. System Flow
 
-שמירת מודלים כ־.pkl + מטא־דאטה JSON
+1. User signs up → `POST /auth/signup`
+2. User logs in → receives JWT token → `POST /auth/login`
+3. User uploads dataset and trains a model → `POST /training/train`
+4. Model is trained, evaluated, and saved under `models/` (+ JSON metadata)
+5. User sends a prediction request → `POST /models/predict/{model_name}`
+6. System loads the latest model and returns the predicted price
+7. Each action consumes tokens according to configured costs
+8. Admin can view users and tokens via the Streamlit dashboard
 
-Dashboard של Streamlit להצגת משתמשים וטוקנים
+---
 
-2. System Flow
+## 3. Project Structure
 
-משתמש נרשם → /auth/signup
-
-מתחבר → מקבל JWT → /auth/login
-
-מעלה dataset ומאמן מודל → /training/train
-
-המודל נשמר + נרשמת היסטוריה
-
-משתמש שולח בקשת חיזוי → /models/predict/{model_name}
-
-המערכת טוענת את המודל האחרון ומחזירה מחיר
-
-כל פעולה צורכת טוקנים לפי הגדרה
-
-מנהל המערכת רואה משתמשים וטוקנים ב־Streamlit
-
-3. Project Structure
+```text
 19.10.2025/
 │
 ├── app/
@@ -53,16 +50,15 @@ Dashboard של Streamlit להצגת משתמשים וטוקנים
 │   └── private_lessons_data.csv
 │
 ├── models/
-│   ├── (saved .pkl models)
+│   ├── (saved .pkl model files)
 │   └── models_metadata.json
 │
 ├── project_info.ipynb
 ├── tokens_dashboard.py
 ├── requirements.txt
 └── README.md
-
 4. Dataset
-4.1 Dataset Structure (private_lessons_data.csv)
+4.1 CSV: private_lessons_data.csv
 Column	Type
 subject	string
 student_level	string
@@ -72,123 +68,142 @@ is_online	string
 city	string
 teacher_age	int
 lesson_price (label)	float
-Feature Columns Used for Training
+
+Feature columns used for training:
+
+python
+Copy code
 ["subject", "student_level", "lesson_minutes",
  "teacher_experience_years", "is_online", "city"]
+Target column:
 
-Target Column
+python
+Copy code
 "lesson_price"
+5. Jupyter Notebook – project_info.ipynb
+The notebook includes:
 
-5. Jupyter Notebook (project_info.ipynb)
-
-ה-notebook מספק:
-
-טעינת הנתונים
+Loading the dataset with pandas
 
 df.head(), df.info(), df.describe()
 
-גרפים באמצעות seaborn/matplotlib:
+Exploratory Data Analysis:
 
-התפלגות מחירים
+price distribution
 
-התפלגות משך שיעור
+lesson duration distribution
 
-ניסיון מורים
+teacher experience distribution
 
-שונות לפי עיר/נושא/רמת תלמיד
+price by subject / student_level / city / online vs offline
 
-Heatmap קורלציות
+correlation heatmap
 
-דוגמה לאימון מודל רגרסיה
+Simple Linear Regression training example
 
-מדדים: R², MAE, RMSE
+Metrics: R², MAE, RMSE (printed with two decimal places)
+
+Short summary of the main insights
+
+The notebook uses the same CSV as the FastAPI endpoints.
 
 6. Technologies
 Component	Technology
 API	FastAPI
-Authentication	JWT (python-jose)
-Password Hashing	bcrypt
-ML Engine	scikit-learn
-Data Processing	pandas
-Model Storage	joblib + JSON
+Auth	JWT (python-jose)
+Password hashing	bcrypt
+ML engine	scikit-learn
+Data processing	pandas
+Model storage	joblib + JSON
 Database	SQLite
-Dashboard	Streamlit
-Python Version	3.x
+Admin dashboard	Streamlit
+Python version	3.x
+
+All dependencies are listed in requirements.txt.
+
 7. Installation
 7.1 Clone the Repository
+bash
+Copy code
 git clone https://github.com/karinshaham1302/19.10.2025.git
 cd 19.10.2025
-
 7.2 Create Virtual Environment
-
 Windows
 
+bash
+Copy code
 python -m venv .venv
 .venv\Scripts\activate
-
-
 macOS / Linux
 
+bash
+Copy code
 python -m venv .venv
 source .venv/bin/activate
-
 7.3 Install Required Packages
+bash
+Copy code
 pip install -r requirements.txt
-
 8. Running the FastAPI Server
+From the project root:
+
+bash
+Copy code
 uvicorn app.main:app --reload
+Open:
 
+API root: http://127.0.0.1:8000/
 
-Endpoints:
+Swagger UI: http://127.0.0.1:8000/docs
 
-API root → http://127.0.0.1:8000/
+9. Authentication & Tokens
+Users and tokens are stored in an SQLite database (for example data/app.db).
 
-Swagger UI → http://127.0.0.1:8000/docs
-
-9. Authentication & Token System
-9.1 Token Costs (config.py)
+9.1 Token Costs
 Action	Tokens
 Train model	1
-Train multiple models	1
+Train multiple	1
 Predict	5
+
 9.2 Auth Flow
+Sign up → POST /auth/signup
 
-Sign up → /auth/signup
+Log in → POST /auth/login
 
-Login → /auth/login
+Copy the access_token value
 
-קבלת JWT
+In Swagger (/docs), click Authorize and paste only the token (without the word Bearer)
 
-ב־Swagger → "Authorize" → הדבקת רק ה־token
+All protected endpoints now accept requests with that JWT
 
-כל בקשה מוגנת עובדת
+9.3 Auth Endpoints
+Method	Path	Description
+POST	/auth/signup	Register new user
+POST	/auth/login	Login and get JWT token
+GET	/auth/tokens	Get current token count
+POST	/auth/add_tokens	Add tokens to user
+DELETE	/auth/remove_user	Remove user
 
-9.3 Available Endpoints
-Method	Endpoint	Description
-POST	/auth/signup	Create user
-POST	/auth/login	Get JWT token
-GET	/auth/tokens	Check token balance
-POST	/auth/add_tokens	Add tokens
-DELETE	/auth/remove_user	Delete user
 10. Model Service (Machine Learning Logic)
+Location: app/model_service.py
 
-נמצא: app/model_service.py
+Responsibilities:
 
-אחריות עיקרית:
+Validate dataset structure
 
-בדיקת תקינות dataset
+Build preprocessing using ColumnTransformer + OneHotEncoder
 
-בניית preprocessing (OneHotEncoder + numeric passthrough)
+Create models:
 
-יצירת מודלים:
+LinearRegression
 
-Linear Regression
+DecisionTreeRegressor
 
-Decision Tree Regressor
+RandomForestRegressor
 
-Random Forest Regressor
+Train models with train/test split
 
-אימון + שמירת המדדים:
+Compute metrics:
 
 R²
 
@@ -198,32 +213,45 @@ MSE
 
 RMSE
 
-שמירת מודל כ־.pkl וכתיבת metadata לקובץ JSON
+Round metrics to two decimal places
 
-פונקציות עיקריות:
+Save the fitted pipeline as .pkl under models/
 
-train_model()
+Save metadata in models_metadata.json
+
+Utility functions:
+
+train_model(...)
 
 get_all_models()
 
-get_latest_model_record()
+get_latest_model_record(model_name)
 
-load_model_from_record()
+load_model_from_record(record)
 
 11. Training API
-11.1 Train a Single Model
+Routes are defined in app/routers/training.py.
 
-POST /training/train
+11.1 Train Single Model – POST /training/train
+Request type: multipart/form-data
 
-Form-data fields:
+Fields:
 
-Field	Type
-file	CSV file
-model_name	string
-model_params	JSON (optional)
+Field	Type	Description
+file	file (CSV)	e.g. private_lessons_data.csv
+model_name	string	"linear", "decision_tree", "random_forest"
+model_params	string (JSON)	Optional hyperparameters JSON
 
-דוגמה לתשובה:
+Requirements:
 
+Valid JWT
+
+Enough tokens (1 token)
+
+Example response (simplified):
+
+json
+Copy code
 {
   "status": "success",
   "model_info": {
@@ -236,26 +264,42 @@ model_params	JSON (optional)
     }
   }
 }
+11.2 Train Multiple Models – POST /training/train_multi
+Trains multiple model types on the same dataset
 
-11.2 Train Multiple Models
+model_names is a JSON list, e.g. ["linear", "random_forest"]
 
-POST /training/train_multi
-
-מאמן מספר מודלים על אותו dataset
-
-מחזיר טבלה עם מדדי כל מודל
+Returns metrics for each trained model
 
 12. Prediction API
-12.1 List All Models
+Routes are defined in app/routers/prediction.py.
 
-GET /models/
+12.1 List Models – GET /models/
+Returns all trained models with their metrics (R², MAE, MSE, RMSE).
 
-12.2 Predict
+Example:
 
-POST /models/predict/{model_name}
+json
+Copy code
+{
+  "models": [
+    {
+      "model_id": 1,
+      "model_name": "linear",
+      "model_type": "LinearRegression",
+      "trained_at": "2025-12-07T10:18:12.390152",
+      "r2": 0.96,
+      "mae": 5.17,
+      "mse": 52.83,
+      "rmse": 7.27
+    }
+  ]
+}
+12.2 Predict – POST /models/predict/{model_name}
+Example request:
 
-Request:
-
+json
+Copy code
 {
   "data": {
     "subject": "math",
@@ -266,42 +310,80 @@ Request:
     "city": "Tel Aviv"
   }
 }
+Example response:
 
-
-Response:
-
+json
+Copy code
 {
   "model_name": "linear",
+  "model_id": 2,
   "prediction": 163.04
 }
+The prediction value is rounded to two decimal places.
 
-13. Streamlit Dashboard
+13. Streamlit Admin Dashboard
+File: tokens_dashboard.py
 
-הרצת הדשבורד:
+The dashboard:
 
+Connects to the same SQLite database
+
+Loads the users table via pandas
+
+Displays:
+
+All users
+
+Tokens per user
+
+Total tokens in the system
+
+Run:
+
+bash
+Copy code
 python -m streamlit run tokens_dashboard.py
+14. Testing the API with Swagger
+Start FastAPI server:
 
+bash
+Copy code
+uvicorn app.main:app --reload
+Open Swagger UI in the browser:
 
-מציג:
+text
+Copy code
+http://127.0.0.1:8000/docs
+Recommended manual test flow:
 
-כל המשתמשים
+POST /auth/signup – create new user
 
-כמות הטוקנים
+POST /auth/login – get access_token
 
-סטטיסטיקות מערכת
+Click Authorize and paste the token (without Bearer)
 
-14. Future Improvements
+POST /auth/add_tokens – add tokens (e.g. 20)
 
-תמיכה במודלים מתקדמים (XGBoost, SVR, Gradient Boosting)
+POST /training/train – upload private_lessons_data.csv and train a model
 
-Hyperparameter Tuning
+GET /models/ – check trained models and metrics
 
-Error handling חכם יותר
+POST /models/predict/linear – send JSON data and get a price prediction
 
-היסטוריית מודלים לפי משתמש
+15. Future Improvements
+Add more ML models (XGBoost, SVR, Gradient Boosting)
 
-Dashboard עם גרפים
+Add hyperparameter tuning (GridSearchCV / RandomizedSearchCV)
 
-בדיקות אוטומטיות (pytest)
+Improve error messages and validation
 
-Docker ל־deployment
+Store full training history per user
+
+Extend Streamlit dashboard with charts
+
+Add automated tests with pytest
+
+Add Docker configuration for deployment
+
+markdown
+Copy code
