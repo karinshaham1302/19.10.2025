@@ -30,6 +30,7 @@ This project implements an end-to-end machine learning system for predicting pri
 
 ## 3. Project Structure
 
+```text
 19.10.2025/
 ├── app/
 │   ├── main.py
@@ -54,7 +55,7 @@ This project implements an end-to-end machine learning system for predicting pri
 ├── tokens_dashboard.py
 ├── requirements.txt
 └── README.md
-
+```
 
 ## 4. Dataset and Notebook
 
