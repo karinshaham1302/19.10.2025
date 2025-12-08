@@ -75,8 +75,15 @@ This project implements an end-to-end machine learning system for predicting pri
 | lesson_price | float |
 
 #### Feature Columns
-["subject", "student_level", "lesson_minutes",
-"teacher_experience_years", "is_online", "city"]
+```python
+FEATURE_COLUMNS = [
+    "subject",
+    "student_level",
+    "lesson_minutes",
+    "teacher_experience_years",
+    "is_online",
+    "city"
+]
 
 ---
 
