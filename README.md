@@ -78,8 +78,6 @@ This project implements an end-to-end machine learning system for predicting pri
 ["subject", "student_level", "lesson_minutes",
 "teacher_experience_years", "is_online", "city"]
 
-yaml Copy code
-
 ---
 
 ### 4.2 Jupyter Notebook: `project_info.ipynb`
@@ -116,30 +114,18 @@ Includes:
 git clone https://github.com/karinshaham1302/19.10.2025.git
 cd 19.10.2025
 
-markdown
-Copy code
-
 ### 6.2 Create Virtual Environment
 
 **Windows**
 python -m venv .venv
 .venv\Scripts\activate
 
-markdown
-Copy code
-
 **macOS/Linux**
 python -m venv .venv
 source .venv/bin/activate
 
-shell
-Copy code
-
 ### 6.3 Install Dependencies
 pip install -r requirements.txt
-
-yaml
-Copy code
 
 ---
 
@@ -147,9 +133,6 @@ Copy code
 
 ### 7.1 Start Server
 uvicorn app.main:app --reload
-
-yaml
-Copy code
 
 ### 7.2 Access API
 - Root: http://127.0.0.1:8000
@@ -219,9 +202,6 @@ Copy code
 Example:
 { "r2": 0.96, "mae": 5.17, "mse": 52.83, "rmse": 7.27 }
 
-yaml
-Copy code
-
 ---
 
 ## 10. Training API
@@ -261,18 +241,12 @@ Example body:
 }
 }
 
-yaml
-Copy code
-
 ---
 
 ## 12. Streamlit Dashboard
 
 Run:
 python -m streamlit run tokens_dashboard.py
-
-yaml
-Copy code
 
 Shows:
 - Users  
