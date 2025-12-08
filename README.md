@@ -244,17 +244,19 @@ Returns metadata for every saved model.
 
 ### 11.2 Predict — `/models/predict/{model_name}`
 
-Example body:
+Example request body:
+```json
 {
-"data": {
-"subject": "math",
-"student_level": "high_school",
-"lesson_minutes": 60,
-"teacher_experience_years": 5,
-"is_online": "yes",
-"city": "Tel Aviv"
+  "data": {
+    "subject": "math",
+    "student_level": "high_school",
+    "lesson_minutes": 60,
+    "teacher_experience_years": 5,
+    "is_online": "yes",
+    "city": "Tel Aviv"
+  }
 }
-}
+```
 
 ---
 
