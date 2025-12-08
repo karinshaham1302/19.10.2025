@@ -269,6 +269,7 @@ Shows:
 - Users  
 - Token balances  
 - Basic statistics  
+- **Add tokens to selected users directly from the dashboard**
 
 ---
 
