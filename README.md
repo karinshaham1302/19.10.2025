@@ -207,7 +207,13 @@ uvicorn app.main:app --reload
 | RMSE | root mean squared |
 
 Example:
-{ "r2": 0.96, "mae": 5.17, "mse": 52.83, "rmse": 7.27 }
+```json
+{
+  "r2": 0.96,
+  "mae": 5.17,
+  "mse": 52.83,
+  "rmse": 7.27
+}
 
 ---
 
