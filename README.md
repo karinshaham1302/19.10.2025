@@ -78,9 +78,6 @@ This project implements an end-to-end machine learning system for predicting pri
 ["subject", "student_level", "lesson_minutes",
 "teacher_experience_years", "is_online", "city"]
 
-yaml
-Copy code
-
 ---
 
 ### 4.2 Jupyter Notebook: `project_info.ipynb`
