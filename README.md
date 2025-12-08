@@ -15,7 +15,7 @@ This project implements an end-to-end machine learning system for predicting pri
 
 ---
 
-## 2. System Flow (High-Level)
+## 2. System Flow 
 
 1. User signs up → `/auth/signup`
 2. User logs in → receives JWT → `/auth/login`
