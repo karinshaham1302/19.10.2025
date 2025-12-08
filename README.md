@@ -84,6 +84,7 @@ FEATURE_COLUMNS = [
     "is_online",
     "city"
 ]
+```
 
 ---
 
@@ -214,6 +215,7 @@ Example:
   "mse": 52.83,
   "rmse": 7.27
 }
+```
 
 ---
 
